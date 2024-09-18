@@ -92,6 +92,11 @@ class Projectile:
         plt.grid(True)
         plt.legend()
 
+    def print_equations_with_drag(self, b, m):
+        print("Equations of motion with a resistive drag force F_r = -b v:")
+        print(f"dv_x/dt = -({b} / {m}) * v_x")
+        print(f"dv_y/dt = -g - ({b} / {m}) * v_y")
+
 
 # Main program exists in a while loop that allows the user to run the program multiple times
 # The program ends when the user enters 'q' or 'Q
@@ -104,6 +109,8 @@ projectile = Projectile(v_i, theta_i)
 
 print(f"\nThe initial launch angle is: {theta_i} degrees")
 
+# Part (a): Compute and print the horizontal range and equation
+print("\nPart (a):")
 print("The horizontal range R is given by:")
 print("R = (v_i^2 * sin(2 * theta_i)) / g")
 # Compute and print the range
@@ -114,6 +121,9 @@ print(f"Initial area: {projectile.compute_area():.2f} square meters")
 # Plot the initial trajectory
 projectile.plot_trajectory()
 
+print("\nParts (b) and (c):")
+# Part (b): Find the launch angle that maximizes the area under the trajectory
+# Part (c): Explain how (b) is done (and do it!)
 # Find the launch angle that maximizes the area under the trajectory
 print("\nWe will iteratively search for the launch angle that maximizes the area under the trajectory")
 print("curve by computing the area for each angle in a specified range from 0 to 90 degrees. The area is")
@@ -133,3 +143,9 @@ print(f"New horizontal range: {projectile.compute_range():.2f} meters")
 projectile.plot_trajectory()
 
 plt.show()
+
+# Part (d): Equations with resistive force
+print("\nPart (d):")
+b = float(input("Enter the damping coefficient b [press enter for default: 0.1] :: ").strip() or "0.1")
+m = float(input("Enter the mass m of the projectile in kg [press enter for default: 1.0] :: ").strip() or "1.0")
+projectile.print_equations_with_drag(b, m)
