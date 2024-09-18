@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.integrate import simps
+from scipy.integrate import simpson
 
 # Problem 1: Projectile Motion
 # (a) Compute the horizontal range of the projectile in terms of v_i and theta_i
@@ -58,7 +58,7 @@ class Projectile:
         Returns the area.
         """
         x_f, y_f = self.compute_trajectory(num_points=num_points)
-        area = simps(y_f, x=x_f)  # Using Simpson's rule for integration
+        area = simpson(y_f, x=x_f)  # Using Simpson's rule for integration
         return area
 
     def maximize_area(self, theta_min=0, theta_max=90, num_angles=100):
