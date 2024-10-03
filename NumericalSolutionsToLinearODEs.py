@@ -11,7 +11,7 @@ from scipy.integrate import simpson
 class DampedOscillator:
     def __init__(self, mass, dampingConstant, springConstant, drivingForceAmplitude, alpha):
         """
-        Initialize the DampedOscillator object's attributes: mass m, damping constant b, spring constant k, 
+        Initialize the DampedOscillator object's attributes: mass m, damping coefficient beta, spring constant k, 
         driving force amplitude f0, and exponential decay constant alpha.
 
         Use the self variable to represent the instance of the class and store the input parameters as attributes.
@@ -19,14 +19,13 @@ class DampedOscillator:
         # Known parameters for the mechanical oscillator given as input during initialization of the 
         # DampedOscillator object.
         self.mass = mass
-        self.dampingConstant = dampingConstant
         self.springConstant = springConstant
         self.drivingForceAmplitude = drivingForceAmplitude
         self.alpha = alpha
+        self.beta = dampingConstant  # Damping coefficient given in the 3 experiments
         
         # Derived parameters
         self.naturalFrequency = np.sqrt(self.springConstant / self.mass)  # Natural frequency
-        self.beta = self.dampingConstant / (2 * self.mass)  # Damping coefficient
 
     def drivingForce(self, t):
         """
@@ -93,13 +92,13 @@ displacement1 = oscillator1.runSimulation(time)
 
 # Second experiment: beta = 0.2(naturalFrequency), α = 0.2(naturalFrequency)
 dampingConstant2 = 0.2 * np.sqrt(springConstant / mass)
-alpha2 = 0.2 * np.sqrt(springConstant / mass)
+alpha2 = np.sqrt(springConstant / mass)
 oscillator2 = DampedOscillator(mass, dampingConstant2, springConstant, drivingForceAmplitude, alpha2)
 displacement2 = oscillator2.runSimulation(time)
 
 # Third experiment: beta = 0.3(naturalFrequency), α = 0.1(naturalFrequency)
 dampingConstant3 = 0.3 * np.sqrt(springConstant / mass)
-alpha3 = 0.1 * np.sqrt(springConstant / mass)
+alpha3 = 2 * mass * np.sqrt(springConstant / mass)
 oscillator3 = DampedOscillator(mass, dampingConstant3, springConstant, drivingForceAmplitude, alpha3)
 displacement3 = oscillator3.runSimulation(time)
 
