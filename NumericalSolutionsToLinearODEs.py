@@ -1,20 +1,40 @@
 ﻿import numpy as np
 import matplotlib.pyplot as plt
 
-# TODO: Replace python's simpson rule with hardcoded one
-from scipy.integrate import simpson
+# Import the custom SimpsonsRule class that uses Simpson's 1/3rd rule
+# to approximate the area, or integral, of a function.
+from SimpsonsRule import SimpsonsRule
 
 # Problem 3: Damped Harmonic Oscillator with Exponentially Decaying Driving Force
-# (a) Use Simpson's Rule to compute the integral for x(t)
+# (a) Use (hardcoded) Simpson's Rule to compute the integral for x(t)
 # (b) Evaluate the integral numerically and plot the solution for three sets of parameters
 
+# DampedOscillator simulates a damped harmonic oscillator with an exponentially decaying driving force.
+# Utilizing Green's functions to find the system response, x(t). The integral that calculates the displacement 
+# and solves the ODE is a convolution of the Green's function and driving force. It is too difficult to do by hand. 
+# The Simpson's 1/3rd rule, written by hand, is used to perform this integral as a precise approximation method.
 class DampedOscillator:
     def __init__(self, mass, dampingConstant, springConstant, drivingForceAmplitude, alpha):
         """
-        Initialize the DampedOscillator object's attributes: mass m, damping coefficient beta, spring constant k, 
-        driving force amplitude f0, and exponential decay constant alpha.
+        Initialize the DampedOscillator object's attributes.
 
         Use the self variable to represent the instance of the class and store the input parameters as attributes.
+
+        Parameters:
+        mass : float
+            The mass of the oscillator (in kg).
+        dampingConstant : float
+            The damping coefficient (in N*s/m), also known as beta.
+        springConstant : float
+            The spring constant (in N/m).
+        drivingForceAmplitude : float
+            The amplitude of the driving force applied to the oscillator.
+        alpha : float
+            The exponential decay constant of the driving force.
+        
+        Attributes:
+        naturalFrequency : float
+            The natural frequency of the oscillator, derived from the mass and spring constant.
         """
         # Known parameters for the mechanical oscillator given as input during initialization of the 
         # DampedOscillator object.
@@ -30,12 +50,30 @@ class DampedOscillator:
     def drivingForce(self, t):
         """
         Driving force function: f(t) = f0 * exp(-alpha * t)
+
+        Parameters:
+        t : float or array-like
+            The time value or array of time values (in seconds) at which to compute the driving force.
+        
+        Returns:
+        float or np.ndarray
+            The driving force evaluated at the given time(s).
         """
         return self.drivingForceAmplitude * np.exp(-self.alpha * t)
 
     def computeDisplacement(self, timeValues):
         """
-        Compute x(t) by numerically integrating using Simpson's rule.
+        computeDisplacement computes the displacement x(t) of the damped oscillator for a range of 
+        time values. The displacement is calculated by convolving the Green's function G(t - t') with the
+        driving force f(t'), using Simpson's 1/3rd Rule for numerical integration.
+
+        Parameters:
+        timeValues : array-like
+            A list or array of time points (in seconds) at which to compute the displacement.
+        
+        Returns:
+        np.ndarray
+            The displacement values x(t) at the given time points.
         """
         # Define the Green's function (response function)
         greenFunction = lambda t: np.exp(-self.beta * t) * np.sin(self.naturalFrequency * t)
@@ -44,12 +82,14 @@ class DampedOscillator:
         for t in timeValues:
             tPrime = np.linspace(0, t, 100)
             drivingForcePrime = self.drivingForce(tPrime)
-            greenValues = greenFunction(t - tPrime)
             
-            # Compute the integral using Simpson's rule from scipy
-            # TODO: This will have to be replaced with hard coded Simpson's rule
-            integrand = drivingForcePrime * greenValues
-            displacementAtT = simpson(integrand, tPrime)
+            # Compute the integral using Simpson's 1/3rd rule
+            # Instantiate a new instance of the class with initializing variables.
+            # Pass a lambda as the integrand of SimpsonsRule, which is the product G(t-t')*f(t').
+            simpsonsSolver = SimpsonsRule(lambda tPrime: self.drivingForce(tPrime) * greenFunction(t - tPrime), 0, t, 100)
+
+            # Call the solve function of SimpsonsRule class to perform the approximation method
+            displacementAtT = simpsonsSolver.solve()
             displacementValues.append(displacementAtT)
         
         return np.array(displacementValues)
@@ -57,16 +97,32 @@ class DampedOscillator:
     def plotSolution(self, timeValues, displacementValues, label):
         """
         Plot x(t) over time t.
+
+        Parameters:
+        timeValues : array-like
+            The time points (in seconds) at which the displacement was computed.
+        displacementValues : array-like
+            The computed displacement values x(t) corresponding to the time points.
+        label : str
+            A label for the plot, typically including the damping coefficient and alpha value.
         """
         plt.plot(timeValues, displacementValues, label=label)
-        plt.xlabel('Time (s)')
-        plt.ylabel('Displacement x(t)')
+        plt.xlabel('Time $(s)$')
+        plt.ylabel('Displacement $x(t)$')
         plt.title('Damped Oscillator Response')
         plt.grid(True)
 
     def runSimulation(self, timeValues):
         """
         Run the simulation for specific time values and plot the result.
+
+        Parameters:
+        timeValues : array-like
+            The time points (in seconds) at which to compute and plot the displacement.
+        
+        Returns:
+        np.ndarray
+            The computed displacement values x(t) for the given time points.
         """
         displacementValues = self.computeDisplacement(timeValues)
         self.plotSolution(timeValues, displacementValues, f'beta={self.beta}, α={self.alpha}')
