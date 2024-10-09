@@ -170,35 +170,37 @@ class DampedOscillator:
         self.plotSolution(timeValues, displacementValues, energyValues, f'beta={self.beta}, α={self.alpha}')
         return displacementValues
 
-# Shared parameters for all oscillators
-mass = 1.0  # mass in kg
-springConstant = 1.0  # spring constant in N/m
-drivingForceAmplitude = 1.0  # amplitude of driving force
-time = np.linspace(0, 20, 500)  # time values for the simulations
+# Run the simulation for three different sets of parameters and plot the results
+if __name__ == "__main__":
+    # Shared parameters for all oscillators
+    mass = 1.0  # mass in kg
+    springConstant = 1.0  # spring constant in N/m
+    drivingForceAmplitude = 1.0  # amplitude of driving force
+    time = np.linspace(0, 20, 500)  # time values for the simulations
 
-# 1. Set the parameters for the experiment.
-# 2. Instantiate a new instance of the DampedOscillator object, oscillator1
-# 3. Call the runSimulation method from the new instance with a list of times
-#    and store the output in displacement1.
-# 4. Repeat 1-3 for oscillator2 + displacement2 and oscillator3 + displacement3
-               
-# First experiment: beta = 0.1(naturalFrequency), α = 0.3(naturalFrequency)
-dampingConstant1 = 0.1 * np.sqrt(springConstant / mass)
-alpha1 = 0.3 * np.sqrt(springConstant / mass)
-oscillator1 = DampedOscillator(mass, dampingConstant1, springConstant, drivingForceAmplitude, alpha1) 
-displacement1 = oscillator1.runSimulation(time)                           
+    # 1. Set the parameters for the experiment.
+    # 2. Instantiate a new instance of the DampedOscillator object, oscillator1
+    # 3. Call the runSimulation method from the new instance with a list of times
+    #    and store the output in displacement1.
+    # 4. Repeat 1-3 for oscillator2 + displacement2 and oscillator3 + displacement3
+                
+    # First experiment: beta = 0.1(naturalFrequency), α = 0.3(naturalFrequency)
+    dampingConstant1 = 0.1 * np.sqrt(springConstant / mass)
+    alpha1 = 0.3 * np.sqrt(springConstant / mass)
+    oscillator1 = DampedOscillator(mass, dampingConstant1, springConstant, drivingForceAmplitude, alpha1) 
+    displacement1 = oscillator1.runSimulation(time)                           
 
-# Second experiment: beta = 0.2(naturalFrequency), α = 0.2(naturalFrequency)
-dampingConstant2 = 0.2 * np.sqrt(springConstant / mass)
-alpha2 = 0.2 * np.sqrt(springConstant / mass)
-oscillator2 = DampedOscillator(mass, dampingConstant2, springConstant, drivingForceAmplitude, alpha2)
-displacement2 = oscillator2.runSimulation(time)
+    # Second experiment: beta = 0.2(naturalFrequency), α = 0.2(naturalFrequency)
+    dampingConstant2 = 0.2 * np.sqrt(springConstant / mass)
+    alpha2 = 0.2 * np.sqrt(springConstant / mass)
+    oscillator2 = DampedOscillator(mass, dampingConstant2, springConstant, drivingForceAmplitude, alpha2)
+    displacement2 = oscillator2.runSimulation(time)
 
-# Third experiment: beta = 0.3(naturalFrequency), α = 0.1(naturalFrequency)
-dampingConstant3 = 0.3 * np.sqrt(springConstant / mass)
-alpha3 = 0.1 * np.sqrt(springConstant / mass)
-oscillator3 = DampedOscillator(mass, dampingConstant3, springConstant, drivingForceAmplitude, alpha3)
-displacement3 = oscillator3.runSimulation(time)
+    # Third experiment: beta = 0.3(naturalFrequency), α = 0.1(naturalFrequency)
+    dampingConstant3 = 0.3 * np.sqrt(springConstant / mass)
+    alpha3 = 0.1 * np.sqrt(springConstant / mass)
+    oscillator3 = DampedOscillator(mass, dampingConstant3, springConstant, drivingForceAmplitude, alpha3)
+    displacement3 = oscillator3.runSimulation(time)
 
-# Show the plot for all three experiments
-plt.show()
+    # Show the plot for all three experiments
+    plt.show()
