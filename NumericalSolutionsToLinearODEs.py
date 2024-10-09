@@ -61,6 +61,38 @@ class DampedOscillator:
         """
         return self.drivingForceAmplitude * np.exp(-self.alpha * t)
 
+    def computeEnergy(self, timeValues, displacementValues):
+        """
+        Using the energy function: E(t) = (m*v^2 + k*x^2) / 2 to acquire the energy at each time.
+
+        Parameters:
+        timeValues : array-like
+            The time points (in seconds) at which the displacement was computed.
+        displacementValues : array-like
+            The computed displacement values x(t) corresponding to the time points.
+        
+        Returns:
+        np.ndarray
+            The computed energy values E(t) for the given time points.
+        """
+        # Calculate velocity using finite differences (central difference method)
+        dt = np.abs(timeValues[1] - timeValues[0])  # Assuming uniform time steps
+        velocityValues = np.zeros_like(displacementValues)
+        
+        # Central difference for velocity (except at the boundaries)
+        velocityValues[1:-1] = (displacementValues[2:] - displacementValues[:-2]) / (2 * dt)
+        # Forward difference for the first point
+        velocityValues[0] = (displacementValues[1] - displacementValues[0]) / (2 * dt)
+        # Backward difference for the last point
+        velocityValues[-1] = (displacementValues[-1] - displacementValues[-2]) / (2 * dt)
+
+        # Compute the energy at each time point
+        kineticEnergy = 0.5 * self.mass * velocityValues**2
+        potentialEnergy = 0.5 * self.springConstant * displacementValues**2
+        totalEnergy = kineticEnergy + potentialEnergy
+
+        return totalEnergy
+
     def computeDisplacement(self, timeValues):
         """
         computeDisplacement computes the displacement x(t) of the damped oscillator for a range of 
@@ -76,12 +108,13 @@ class DampedOscillator:
             The displacement values x(t) at the given time points.
         """
         # Define the Green's function (response function)
-        greenFunction = lambda t: np.exp(-self.beta * t) * np.sin(self.naturalFrequency * t)
+        def greenFunction(t):
+            return np.exp(-self.beta * t) * np.sin(self.naturalFrequency * t)
         
         displacementValues = []
         for t in timeValues:
             tPrime = np.linspace(0, t, 100)
-            drivingForcePrime = self.drivingForce(tPrime)
+            self.drivingForce(tPrime)
             
             # Compute the integral using Simpson's 1/3rd rule
             # Instantiate a new instance of the class with initializing variables.
@@ -94,38 +127,47 @@ class DampedOscillator:
         
         return np.array(displacementValues)
 
-    def plotSolution(self, timeValues, displacementValues, label):
+    def plotSolution(self, timeValues, displacementValues, energyValues, label):
         """
-        Plot x(t) over time t.
+        Plot x(t) and E(t) over time t.
 
         Parameters:
         timeValues : array-like
             The time points (in seconds) at which the displacement was computed.
         displacementValues : array-like
             The computed displacement values x(t) corresponding to the time points.
+        energyValues : array-like
+            The computed energy values E(t) corresponding to the time points.
         label : str
             A label for the plot, typically including the damping coefficient and alpha value.
         """
-        plt.plot(timeValues, displacementValues, label=label)
-        plt.xlabel('Time $(s)$')
-        plt.ylabel('Displacement $x(t)$')
-        plt.title('Damped Oscillator Response')
-        plt.grid(True)
+        fig, ax1 = plt.subplots()
+
+        color = 'tab:blue'
+        ax1.set_xlabel('Time $(s)$')
+        ax1.set_ylabel('Displacement $x(t)$', color=color)
+        ax1.plot(timeValues, displacementValues, color=color, label=f'Displacement ({label})')
+        ax1.tick_params(axis='y', labelcolor=color)
+        ax1.grid(True)
+
+        ax2 = ax1.twinx()  # Instantiate a second axes that shares the same x-axis
+        color = 'tab:red'
+        ax2.set_ylabel('Energy $E(t)$', color=color)
+        ax2.plot(timeValues, energyValues, color=color, linestyle='--', label=f'Energy ({label})')
+        ax2.set_ylim(bottom=ax1.get_ylim()[0]) # Set the y-axis bottom limits to be the same as the first axis
+        ax2.set_ylim(top=ax1.get_ylim()[1]) # Set the y-axis top limits to be the same as the first axis
+        ax2.tick_params(axis='y', labelcolor=color)
+
+        fig.tight_layout()  # To make sure labels do not overlap
+        plt.title('Damped Oscillator Response and Energy')
+        ax1.legend(bbox_to_anchor=(0.40, 1.0), loc='upper left')
+        ax2.legend(bbox_to_anchor=(0.40, 0.9), loc='upper left')
+  
 
     def runSimulation(self, timeValues):
-        """
-        Run the simulation for specific time values and plot the result.
-
-        Parameters:
-        timeValues : array-like
-            The time points (in seconds) at which to compute and plot the displacement.
-        
-        Returns:
-        np.ndarray
-            The computed displacement values x(t) for the given time points.
-        """
         displacementValues = self.computeDisplacement(timeValues)
-        self.plotSolution(timeValues, displacementValues, f'beta={self.beta}, α={self.alpha}')
+        energyValues = self.computeEnergy(timeValues, displacementValues)
+        self.plotSolution(timeValues, displacementValues, energyValues, f'beta={self.beta}, α={self.alpha}')
         return displacementValues
 
 # Shared parameters for all oscillators
@@ -148,16 +190,15 @@ displacement1 = oscillator1.runSimulation(time)
 
 # Second experiment: beta = 0.2(naturalFrequency), α = 0.2(naturalFrequency)
 dampingConstant2 = 0.2 * np.sqrt(springConstant / mass)
-alpha2 = np.sqrt(springConstant / mass)
+alpha2 = 0.2 * np.sqrt(springConstant / mass)
 oscillator2 = DampedOscillator(mass, dampingConstant2, springConstant, drivingForceAmplitude, alpha2)
 displacement2 = oscillator2.runSimulation(time)
 
 # Third experiment: beta = 0.3(naturalFrequency), α = 0.1(naturalFrequency)
 dampingConstant3 = 0.3 * np.sqrt(springConstant / mass)
-alpha3 = 2 * mass * np.sqrt(springConstant / mass)
+alpha3 = 0.1 * np.sqrt(springConstant / mass)
 oscillator3 = DampedOscillator(mass, dampingConstant3, springConstant, drivingForceAmplitude, alpha3)
 displacement3 = oscillator3.runSimulation(time)
 
 # Show the plot for all three experiments
-plt.legend()
 plt.show()
