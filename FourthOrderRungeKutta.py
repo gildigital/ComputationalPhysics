@@ -27,10 +27,10 @@ class FourthOrderRungeKutta:
         self.b = b        # End of the interval
         self.N = N        # Number of steps
         self.h = (b - a) / N  # Step size
-        self.x0 = x0      # Initial condition
+        self.x0 = np.array(x0)  # Initial condition (state vector [x0, v0])
         self.enablePlot = enablePlot # Enable plotting
         self.runName = runName
-    
+
     def solve(self):
         """
         Solves the ODE using the 4th-order Runge-Kutta method (RK4).
@@ -46,7 +46,7 @@ class FourthOrderRungeKutta:
         x = self.x0
         
         for t in tpoints:
-            xpoints.append(x)
+            xpoints.append(x.copy()) # Append the current state vector to capture both x and v
             k1 = self.func(x, t)
             k2 = self.func(x + 0.5 * self.h * k1, t + 0.5 * self.h)
             k3 = self.func(x + 0.5 * self.h * k2, t + 0.5 * self.h)
@@ -65,9 +65,10 @@ class FourthOrderRungeKutta:
         xpoints : numpy.ndarray
             Array of approximated x values.
         """
-        plt.plot(tpoints, xpoints, label=self.runName)
-        plt.xlabel("t")
-        plt.ylabel("x(t)")
+        plt.plot(tpoints, xpoints[:, 0], label=f'{self.runName} - Displacement')
+        plt.plot(tpoints, xpoints[:, 1], label=f'{self.runName} - Velocity', linestyle='--')
+        plt.xlabel("Time $t$")
+        plt.ylabel("State Variables")
+        plt.legend()
         if self.enablePlot:
-            print("Showing 4th Order RK plot...")
             plt.show()
