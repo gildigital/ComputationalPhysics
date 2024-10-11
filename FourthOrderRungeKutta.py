@@ -46,12 +46,12 @@ class FourthOrderRungeKutta:
         x = self.x0
         
         for t in tpoints:
-            xpoints.append(x.copy()) # Append the current state vector to capture both x and v
-            k1 = self.func(x, t)
-            k2 = self.func(x + 0.5 * self.h * k1, t + 0.5 * self.h)
-            k3 = self.func(x + 0.5 * self.h * k2, t + 0.5 * self.h)
-            k4 = self.func(x + self.h * k3, t + self.h)
-            x += (self.h / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)  # RK4 update step
+            xpoints.append(x.copy())  # Append the current state vector
+            k1 = self.h * self.func(x, t)  # Multiply by h to scale the derivative
+            k2 = self.h * self.func(x + 0.5 * k1, t + 0.5 * self.h)
+            k3 = self.h * self.func(x + 0.5 * k2, t + 0.5 * self.h)
+            k4 = self.h * self.func(x + k3, t + self.h)
+            x += (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)  # RK4 update step
         
         return np.array(tpoints), np.array(xpoints)
     
