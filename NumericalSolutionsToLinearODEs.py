@@ -100,11 +100,11 @@ class DampedOscillator:
         driving force f(t'), using Simpson's 1/3rd Rule for numerical integration.
 
         Parameters:
-        timeValues : array-like
+        timeValues : array
             A list or array of time points (in seconds) at which to compute the displacement.
         
         Returns:
-        np.ndarray
+        np.array
             The displacement values x(t) at the given time points.
         """
         # Define the Green's function (response function)
@@ -142,24 +142,26 @@ class DampedOscillator:
             A label for the plot, typically including the damping coefficient and alpha value.
         """
         fig, ax1 = plt.subplots()
+        
+        fig.set_size_inches(4, 3.5)
 
         color = 'tab:blue'
         ax1.set_xlabel('Time $(s)$')
         ax1.set_ylabel('Displacement $x(t)$', color=color)
-        ax1.plot(timeValues, displacementValues, color=color, label=f'Displacement ({label})')
+        ax1.plot(timeValues, displacementValues, color=color, label='Displacement')
         ax1.tick_params(axis='y', labelcolor=color)
         ax1.grid(True)
 
         ax2 = ax1.twinx()  # Instantiate a second axes that shares the same x-axis
         color = 'tab:red'
         ax2.set_ylabel('Energy $E(t)$', color=color)
-        ax2.plot(timeValues, energyValues, color=color, linestyle='--', label=f'Energy ({label})')
+        ax2.plot(timeValues, energyValues, color=color, linestyle='--', label='Energy')
         ax2.set_ylim(bottom=ax1.get_ylim()[0]) # Set the y-axis bottom limits to be the same as the first axis
         ax2.set_ylim(top=ax1.get_ylim()[1]) # Set the y-axis top limits to be the same as the first axis
         ax2.tick_params(axis='y', labelcolor=color)
 
         fig.tight_layout()  # To make sure labels do not overlap
-        plt.title('Damped Oscillator Response and Energy')
+        plt.title(f'Response and Energy: {label}')
         ax1.legend(bbox_to_anchor=(0.40, 1.0), loc='upper left')
         ax2.legend(bbox_to_anchor=(0.40, 0.9), loc='upper left')
   
@@ -176,7 +178,7 @@ if __name__ == "__main__":
     mass = 1.0  # mass in kg
     springConstant = 1.0  # spring constant in N/m
     drivingForceAmplitude = 1.0  # amplitude of driving force
-    time = np.linspace(0, 20, 500)  # time values for the simulations
+    time = np.linspace(0, 20, 500)  # time values; t = 0, 0.04, 0.08, ..., 20
 
     # 1. Set the parameters for the experiment.
     # 2. Instantiate a new instance of the DampedOscillator object, oscillator1
@@ -197,7 +199,7 @@ if __name__ == "__main__":
     displacement2 = oscillator2.runSimulation(time)
 
     # Third experiment: beta = 0.3(naturalFrequency), α = 0.1(naturalFrequency)
-    dampingConstant3 = 0.3 * np.sqrt(springConstant / mass)
+    dampingConstant3 = 0.9 * np.sqrt(springConstant / mass)
     alpha3 = 0.1 * np.sqrt(springConstant / mass)
     oscillator3 = DampedOscillator(mass, dampingConstant3, springConstant, drivingForceAmplitude, alpha3)
     displacement3 = oscillator3.runSimulation(time)

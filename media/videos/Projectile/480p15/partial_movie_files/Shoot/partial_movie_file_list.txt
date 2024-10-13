@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/Gilio/Documents/Fall 24/GitHub/371stConquest/media/videos/Projectile/480p15/partial_movie_files/Shoot/1185818338_1450578106_359935057.mp4'
+file 'file:C:/Users/Gilio/Documents/Fall 24/GitHub/371stConquest/media/videos/Projectile/480p15/partial_movie_files/Shoot/624642324_3164853295_3453317529.mp4'
+file 'file:C:/Users/Gilio/Documents/Fall 24/GitHub/371stConquest/media/videos/Projectile/480p15/partial_movie_files/Shoot/624642324_1141282389_909343962.mp4'

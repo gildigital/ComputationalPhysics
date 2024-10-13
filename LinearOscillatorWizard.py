@@ -110,7 +110,13 @@ class LinearOscillatorWizard:
 
     def run_simulation(self):
         """
-        Runs the simulation for the oscillator and plots the results.
+        Runs the simulation for the oscillator and returns the results.
+        
+        Returns:
+        time_values : np.ndarray
+            Array of time points.
+        solution : np.ndarray
+            [dxdt, dvdt] values at each time point.
         """
         # Initial state [x(0), v(0)]
         initial_state = np.array([self.x0, self.v0])
@@ -121,24 +127,13 @@ class LinearOscillatorWizard:
 
         # Create an instance of FourthOrderRungeKutta to solve the system
         rk4_solver = FourthOrderRungeKutta(func, self.t0, self.t_end, int((self.t_end - self.t0) / self.dt), initial_state, enablePlot=False)
-        
+
         # Solve using RK4
         time_values, solution = rk4_solver.solve()
 
-        # Extract displacement and velocity
-        x_values = solution[:, 0]
-        v_values = solution[:, 1]
-
-        # Plot results
-        self.plot_results(time_values, x_values, v_values)
-
-        # If verification is enabled, plot the particular solution alongside the numerical solution
-        if self.verify:
-            if self.t_end > 50:
-                self.verify_particular_solution(time_values, x_values)
-            else:
-                print("Verification is only available for t_end > 50.")
-
+        return time_values, solution
+    
+    # TODO: This method is not used in the current implementation. You can remove it.    
     def plot_results(self, time_values, x_values, v_values):
         """
         Plot the displacement and velocity over time.
@@ -176,19 +171,45 @@ class LinearOscillatorWizard:
         plt.tight_layout()
         plt.show()
 
-# Example usage
+# Example usage with multiple time steps for comparison
 if __name__ == "__main__":
     # Parameters for the oscillator
-    omega0 = 0.5   # Natural frequency (increased)
+    omega0 = 0.5   # Natural frequency
     omega_d = 0.618  # Driving frequency (close to resonance)
     f0 = 1.0        # Amplitude of the driving force
-    beta = 0.1     # Damping coefficient (decreased for weak damping)
+    beta = 0.1     # Damping coefficient
     x0 = 0.0        # Initial displacement
     v0 = 0.0        # Initial velocity
     t0 = 0.0        # Start time
-    t_end = 500    # End time
-    dt = 0.01       # Time step
+    t_end = 100    # End time
 
-    # Create an instance of the LinearOscillatorWizard and run the simulation
-    oscillator = LinearOscillatorWizard(omega0, omega_d, f0, beta, x0, v0, t0, t_end, dt, verify=True)
-    oscillator.run_simulation()
+    # List of different time steps to evaluate the accuracy
+    time_steps = [0.1, 1, 2]
+
+    # Set up a plot to compare results
+    plt.figure(figsize=(10, 6))
+    
+    for dt in time_steps:
+        # Create an instance of the LinearOscillatorWizard for each time step
+        oscillator = LinearOscillatorWizard(omega0, omega_d, f0, beta, x0, v0, t0, t_end, dt, verify=False)
+        time_values, solution = oscillator.run_simulation()
+
+        # Extract displacement from solution
+        x_values = solution[:, 0]
+
+        # Plot results for each time step
+        plt.plot(time_values, x_values, label=f'Δt = {dt}')
+
+    # Add analytical solution for comparison
+    analytical_time = np.linspace(t0, t_end, 1000)
+    analytical_solution = [oscillator.particular_solution(t) for t in analytical_time]
+    plt.plot(analytical_time, analytical_solution, 'k--', label='Analytical Solution')
+
+    # Customize plot
+    plt.xlabel('Time $t$ (s)')
+    plt.ylabel('Displacement $x(t)$ (m)')
+    plt.xlim(t_end - 50, t_end)
+    plt.title('Displacement $(m)$ vs. Time $(t)$ for Damped Driven Oscillator')
+    plt.legend(loc='upper right')
+    plt.grid(True)
+    plt.show()
