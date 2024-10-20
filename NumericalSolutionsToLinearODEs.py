@@ -107,21 +107,29 @@ class DampedOscillator:
         np.array
             The displacement values x(t) at the given time points.
         """
-        # Define the Green's function (response function)
-        def greenFunction(t):
-            return np.exp(-self.beta * t) * np.sin(self.naturalFrequency * t)
         
+        # Define the Green's function (response function)
+        # The Green's function is the solution to the homogeneous equation of the damped oscillator.
+        # Sourced from Ted's Lecture 7 notes on Green's functions
+        def greenFunction(timeDifference):
+            omegaDamped = np.sqrt(self.naturalFrequency**2 - self.beta**2)
+            return (1 / (self.mass * omegaDamped)) * np.exp(-self.beta * timeDifference) * np.sin(omegaDamped * timeDifference)
+        
+        # Initialize the array that will hold the displacement values
         displacementValues = []
-        for t in timeValues:
-            tPrime = np.linspace(0, t, 100)
-            self.drivingForce(tPrime)
-            
-            # Compute the integral using Simpson's 1/3rd rule
+        
+        # Loop through each time point and compute the displacement using the convolution integral
+        for t in timeValues:   
+            tPrime = np.linspace(0, t, 100)  # Time points for the convolution integral   
+                  
+            # Approximate the convolution integral using Simpson's 1/3rd rule.
             # Instantiate a new instance of the class with initializing variables.
-            # Pass a lambda as the integrand of SimpsonsRule, which is the product G(t-t')*f(t').
+            # Pass a lambda with t' as the argument to serve as the integrand of SimpsonsRule, 
+            # which is the product G(t-t')*f(t').
             simpsonsSolver = SimpsonsRule(lambda tPrime: self.drivingForce(tPrime) * greenFunction(t - tPrime), 0, t, 100)
 
             # Call the solve function of SimpsonsRule class to perform the approximation method
+            # The SimpsonsRule.solve method will return the displacement at time t.
             displacementAtT = simpsonsSolver.solve()
             displacementValues.append(displacementAtT)
         
@@ -188,18 +196,18 @@ if __name__ == "__main__":
                 
     # First experiment: beta = 0.1(naturalFrequency), α = 0.3(naturalFrequency)
     dampingConstant1 = 0.1 * np.sqrt(springConstant / mass)
-    alpha1 = 0.3 * np.sqrt(springConstant / mass)
+    alpha1 = 1 * np.sqrt(springConstant / mass)
     oscillator1 = DampedOscillator(mass, dampingConstant1, springConstant, drivingForceAmplitude, alpha1) 
     displacement1 = oscillator1.runSimulation(time)                           
 
     # Second experiment: beta = 0.2(naturalFrequency), α = 0.2(naturalFrequency)
-    dampingConstant2 = 0.2 * np.sqrt(springConstant / mass)
+    dampingConstant2 = 0.1 * np.sqrt(springConstant / mass)
     alpha2 = 0.2 * np.sqrt(springConstant / mass)
     oscillator2 = DampedOscillator(mass, dampingConstant2, springConstant, drivingForceAmplitude, alpha2)
     displacement2 = oscillator2.runSimulation(time)
 
     # Third experiment: beta = 0.3(naturalFrequency), α = 0.1(naturalFrequency)
-    dampingConstant3 = 0.9 * np.sqrt(springConstant / mass)
+    dampingConstant3 = 0.1 * np.sqrt(springConstant / mass)
     alpha3 = 0.1 * np.sqrt(springConstant / mass)
     oscillator3 = DampedOscillator(mass, dampingConstant3, springConstant, drivingForceAmplitude, alpha3)
     displacement3 = oscillator3.runSimulation(time)

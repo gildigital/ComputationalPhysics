@@ -58,7 +58,7 @@ class SimpsonsRule:
             + 4 * np.sum(fpoints[1:-1:2])  # Sum of odd-indexed terms multiplied by 4
             + 2 * np.sum(fpoints[2:-2:2])  # Sum of even-indexed terms multiplied by 2, excluding the end points
             + fpoints[-1]  # f(b), the last function value
-        )
+        ) # All terms are multiplied by h/3
         
         return result  # Return the approximate value of the integral
     
