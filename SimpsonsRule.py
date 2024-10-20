@@ -61,7 +61,7 @@ class SimpsonsRule:
         ) # All terms are multiplied by h/3
         
         return result  # Return the approximate value of the integral
-    
+
     def plot(self):
         """
         (Optional) Plots the function and the approximated area.
