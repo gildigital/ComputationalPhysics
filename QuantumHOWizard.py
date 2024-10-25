@@ -5,7 +5,8 @@ from SimpsonsRule import SimpsonsRule
 
 class QuantumHarmonicOscillator:
     def __init__(self, m=1.0, omega=1.0, hbar=1.0):
-        """_summary_
+        """
+        Initialize the quantum harmonic oscillator.
 
         Args:
             m (float, optional): Defaults to 1.0.
