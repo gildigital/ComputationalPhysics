@@ -56,9 +56,9 @@ class DampedOscillator:
         self.springConstant = springConstant
         self.drivingForceAmplitude = drivingForceAmplitude
         self.alpha = alpha
-        self.beta = dampingConstant  # Damping coefficient given in the 3 experiments
+        self.beta = dampingConstant # Damping coefficient given in the 3 experiments
         # Derived parameters
-        self.naturalFrequency = np.sqrt(self.springConstant/self.mass)  # Natural frequency
+        self.naturalFrequency = np.sqrt(self.springConstant/self.mass) # Natural frequency
 
     def drivingForce(self, t):
         """
@@ -91,7 +91,7 @@ class DampedOscillator:
         |np.ndarray| The computed energy values E(t) for the given time points.
         """
         # Calculate velocity using finite differences (central difference method)
-        dt = np.abs(timeValues[1] - timeValues[0])  # Assuming uniform time steps
+        dt = np.abs(timeValues[1] - timeValues[0]) # Assuming uniform time steps
         velocityValues = np.zeros_like(displacementValues)
         
         # Central difference for velocity (except at the boundaries)
@@ -137,7 +137,7 @@ class DampedOscillator:
         
         # Loop through each time point and compute the displacement using the convolution integral
         for t in timeValues:
-            tPrime = np.linspace(0, t, 100)  # Time points for the convolution integral   
+            tPrime = np.linspace(0, t, 100) # Time points for the convolution integral   
                   
             # Approximate the convolution integral using Simpson's 1/3rd rule.
             # Instantiate a new instance of the class with initializing variables.
@@ -178,7 +178,7 @@ class DampedOscillator:
         ax1.tick_params(axis='y', labelcolor=color)
         ax1.grid(True)
 
-        ax2 = ax1.twinx()  # Instantiate a second axes that shares the same x-axis
+        ax2 = ax1.twinx() # Instantiate a second axes that shares the same x-axis
         color = 'tab:red'
         ax2.set_ylabel('Energy $E(t)$', color=color)
         ax2.plot(timeValues, energyValues, color=color, linestyle='--', label='Energy')
@@ -186,7 +186,7 @@ class DampedOscillator:
         ax2.set_ylim(top=ax1.get_ylim()[1]) # Set the y-axis top limits to be the same as the first axis
         ax2.tick_params(axis='y', labelcolor=color)
 
-        fig.tight_layout()  # To make sure labels do not overlap
+        fig.tight_layout() # To make sure labels do not overlap
         plt.title(f'Response and Energy: {label}')
         ax1.legend(bbox_to_anchor=(0.40, 1.0), loc='upper left')
         ax2.legend(bbox_to_anchor=(0.40, 0.9), loc='upper left')
@@ -216,10 +216,10 @@ class DampedOscillator:
 # Run the simulation for three different sets of parameters and plot the results
 if __name__ == "__main__":
     # Shared parameters for all oscillators
-    mass = 1.0  # mass in kg
-    springConstant = 1.0  # spring constant in N/m
-    drivingForceAmplitude = 1.0  # amplitude of driving force
-    time = np.linspace(0, 20, 500)  # time values; t = 0, 0.04, 0.08, ..., 20
+    mass = 1.0 # mass in kg
+    springConstant = 1.0 # spring constant in N/m
+    drivingForceAmplitude = 1.0 # amplitude of driving force
+    time = np.linspace(0, 20, 500) # time values; t = 0, 0.04, 0.08, ..., 20
 
     # 1. Set the parameters for the experiment.
     # 2. Instantiate a new instance of the DampedOscillator object, oscillator1
