@@ -156,14 +156,15 @@ class DampedOscillator:
         """
         Plot x(t) and E(t) over time t.
 
-        Parameters:
-        timeValues : array-like
+        <H4>Keyword arguments</H4>
+        --------------------------
+        timeValues : |array-like|
             The time points (in seconds) at which the displacement was computed.
-        displacementValues : array-like
+        displacementValues : |array-like|
             The computed displacement values x(t) corresponding to the time points.
-        energyValues : array-like
+        energyValues : |array-like|
             The computed energy values E(t) corresponding to the time points.
-        label : str
+        label : |str|
             A label for the plot, typically including the damping coefficient and alpha value.
         """
         fig, ax1 = plt.subplots()
