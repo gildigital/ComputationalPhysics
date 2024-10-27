@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long, ambiguous-variable-name
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import simpson

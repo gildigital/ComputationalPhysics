@@ -1,23 +1,30 @@
-# Approximate the area of functions using Simpson's 1/3rd rule.
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long
+
+""" Approximate the area of functions using Simpson's 1/3rd rule. """
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 class SimpsonsRule:
+    """
+    Simpson's Rule solver for approximating the integral of a function.
+    """
+    
     def __init__(self, func, a, b, N, enablePlot=False):
         """
         Initializes the Simpson's Rule solver.
         
-        Parameters:
-        func : callable
+        <H4>Keyword arguments</H4>
+        --------------------------
+        func : |callable|
             The function to integrate.
-        a : float
+        a : |float|
             The lower bound of the integration interval.
-        b : float
+        b : |float|
             The upper bound of the integration interval.
-        N : int
+        N : |int|
             The number of steps (must be even for Simpson's Rule).
-        enablePlot : bool
+        enablePlot : |bool|
             If True, enable plotting of the function and the approximate area.
         """
         self.func = func
@@ -40,8 +47,9 @@ class SimpsonsRule:
         """
         Applies Simpson's 1/3rd Rule to compute the numerical integral.
 
-        Returns:
-        result : float
+        <H4>Returns</H4>
+        ----------------
+        result : |float|
             The approximated integral value.
         """
         h = self.h  # Step size for the interval (width of each subinterval)

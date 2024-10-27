@@ -1,15 +1,23 @@
-# Sourced from USD Phys 371, Fall 24, ODE.pdf, TODO: Fix this source
-# Euler's method is a 1st order Runge-Kutta method.
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long
+
+"""
+Sourced from USD Phys 371, Fall 24, ODE.pdf
+Euler's method is a 1st order Runge-Kutta method.
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 class EulersMethod:
+    """
+    EulersMethod class for solving ODEs using Euler's method (1st-order Runge-Kutta).
+    """
     def __init__(self, func, a, b, N, x0, enablePlot=True):
         """
         Initializes the Euler method solver.
         
-        Parameters:
+        <H4>Keyword arguments</H4>
+        --------------------------
         func : callable
             The function to approximate (right-hand side of the ODE).
         a : float
@@ -53,7 +61,8 @@ class EulersMethod:
         """
         Plots the results of the ODE approximation.
         
-        Parameters:
+        <H4>Keyword arguments</H4>
+        --------------------------
         tpoints : numpy.ndarray
             Array of time points.
         xpoints : numpy.ndarray

@@ -1,20 +1,26 @@
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long, ambiguous-variable-name
+
+"""StandingWaveWizard solves standing wave problems using Simponson's Rule and visualizes the results."""
 import numpy as np
 import matplotlib.pyplot as plt
+
 from SimpsonsRule import SimpsonsRule
 
-# Problem Set 3: Standing Wave Wizard
 
+# Problem Set 3: Standing Wave Wizard
 class StandingWaveWizard:
+    """StandingWaveWizard class for solving standing wave problems."""
     def __init__(self, length=1.0, waveProblem='fixed-free', numPoints=1000):
         """
         Initialize the wave problem solver.
         
-        Parameters:
-        length : float
+        <H4>Keyword arguments</H4>
+        --------------------------
+        length : |float|
             Length of the string
-        waveProblem : str
-            Type of wave problem to solve ('fixed-free' or 'fixed-initial')
-        numPoints : int
+        waveProblem : |str|
+            Type of wave problem to solve ('fixed-free', or 'fixed-initial', etc...)
+        numPoints : |int|
             Number of points for visualization
         """
         self.length = length
@@ -28,11 +34,11 @@ class StandingWaveWizard:
         Compute the nth standing wave mode.
         """
         if self.waveProblem == 'fixed-free':
-            k = (2 * modeNumber - 1) * np.pi / (2 * self.length)
-            return np.sin(k * self.x)
+            k = (2*modeNumber-1) * np.pi/(2*self.length)
+            return np.sin(k*self.x)
         elif self.waveProblem == 'fixed-initial':
-            k = modeNumber * np.pi / self.length
-            return np.sin(k * self.x)
+            k = modeNumber*np.pi/self.length
+            return np.sin(k*self.x)
         elif self.waveProblem == 'connected-strings':
             return self.computeConnectedStringMode(modeNumber)
     
@@ -41,7 +47,7 @@ class StandingWaveWizard:
         Compute the standing wave mode for connected strings.
         This handles two strings with different wave speeds connected at the middle.
         """
-        halfL = self.length / 2  # Length of each half (String A and String B)
+        halfL = self.length/2  # Length of each half (String A and String B)
         xA = np.linspace(0, halfL, self.numPoints//2)
         xB = np.linspace(halfL, self.length, self.numPoints//2)
 
@@ -50,13 +56,13 @@ class StandingWaveWizard:
         vB = 2 * self.waveSpeed
 
         # Calculate frequencies based on the mode number and the two different phase speeds
-        kA = modeNumber * np.pi / halfL
-        kB = (modeNumber * np.pi / halfL) * vA / vB
+        kA = modeNumber*np.pi/halfL
+        kB = (modeNumber*np.pi/halfL)*vA/vB
 
         # Create the wave for each part of the string
-        yA = np.sin(kA * xA)  # Standing wave on String A
+        yA = np.sin(kA*xA)  # Standing wave on String A
         
-        yB = np.sin(kB * (xB + halfL))  # Standing wave on String B, shifted to start at halfL
+        yB = np.sin(kB * (xB+halfL))  # Standing wave on String B, shifted to start at halfL
         
         # Concatenate both parts of the string to get the full wave
         return np.concatenate([yA, yB])
@@ -69,14 +75,14 @@ class StandingWaveWizard:
         result = np.zeros_like(x)
         
         # Define regions according to problem
-        mask1 = x < self.length / 3
-        mask2 = (x >= self.length / 3) & (x <= 2 * self.length / 3)
-        mask3 = x > 2 * self.length / 3
+        mask1 = x < self.length/3
+        mask2 = (x >= self.length/3) & (x <= 2*self.length/3)
+        mask3 = x > 2 * self.length/3
         
         # Apply piecewise function
-        result[mask1] = 3 * x[mask1] / self.length
+        result[mask1] = 3*x[mask1]/self.length
         result[mask2] = 1
-        result[mask3] = -3 * x[mask3] / self.length + 3
+        result[mask3] = -3*x[mask3]/self.length + 3
         
         return result
     
@@ -164,10 +170,10 @@ class StandingWaveWizard:
             ax.plot(self.x, y, 'b-')
             ax.plot([0, self.length], [0, 0], 'k--', alpha=0.3)
             ax.set_ylim(-1.2, 1.2)
-            ax.set_xticks(np.arange(0, self.length + 0.1, 0.1))
+            ax.set_xticks(np.arange(0, self.length+0.1, 0.1))
 
             ax.plot(0, 0, 'ro', label='Fixed end')
-            ax.plot(self.length / 2, y[self.numPoints // 2], 'bo', label='Node at center')
+            ax.plot(self.length/2, y[self.numPoints//2], 'bo', label='Node at center')
             ax.plot(self.length, 0, 'ro', label='Fixed end')
 
             if i == 0:
@@ -183,7 +189,8 @@ class StandingWaveWizard:
         Compute nth Fourier coefficient using Simpson's Rule.
         """
         def integrandN(x):
-            return self.initialShape(x) * np.sin(modeNumber * np.pi * x / self.length)
+            """"""
+            return self.initialShape(x)*np.sin(modeNumber*np.pi*x/self.length)
         
         # The nth Fourier coefficient contains the integral of the product of the initial shape
         # and the nth mode function. We use Simpson's Rule to approximate this integral.

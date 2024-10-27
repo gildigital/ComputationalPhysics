@@ -1,47 +1,78 @@
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long, ambiguous-variable-name
+
+"""Solver for the quantum harmonic oscillator using the shooting method."""
+
 import numpy as np
 import matplotlib.pyplot as plt
+
 from FourthOrderRungeKutta import FourthOrderRungeKutta
 from SimpsonsRule import SimpsonsRule
 
+
 class QuantumHarmonicOscillator:
+    """
+    QuantumHarmonicOscillator solves the quantum harmonic oscillator using the shooting method
+    and plots the energy eigenstates and probability densities.
+    """
     def __init__(self, m=1.0, omega=1.0, hbar=1.0):
         """
         Initialize the quantum harmonic oscillator.
 
-        Args:
-            m (float, optional): Defaults to 1.0.
-            omega (float, optional): Defaults to 1.0.
-            hbar (float, optional): Defaults to 1.0.
+        <H4>Keyword arguments</H4>
+        --------------------------
+            m : |float, optional|
+                Defaults to 1.0.
+            omega : |float, optional|
+                Defaults to 1.0.
+            hbar : |float, optional|
+                Defaults to 1.0.
         """
         self.m = m
         self.omega = omega
         self.hbar = hbar
         self.current_energy = None
+        """Initialize the energy to None."""
         
     def potential(self, x):
         """
-        Calculate the potential energy V(x) = (1/2) * m * (omega)^2 * x^2
+        Calculate the potential energy V(x) = (1/2)*m*(omega)^2*x^2
         """
-        return 0.5 * self.m * self.omega**2 * x**2
+        return 0.5*self.m*self.omega**2*x**2
     
     def exact_energy(self, n):
         """
         Calculate exact energy eigenvalue for nth state
         """
-        return (n + 0.5) * self.hbar * self.omega
+        return (n+0.5) * self.hbar*self.omega
     
     def schrodinger(self, state, x):
         """
-        Define the Schrodinger equation for RK4        
+        Define the Schrodinger equation for RK4
+        
+        <H4>Keyword arguments</H4>
+        --------------------------
+        state : |arraylike|
+            Current state of the system [psi, dpsi/dx], where 
+            <ol>
+                <li>psi: wavefunction</li>
+                <li>dpsi/dx: derivative of wavefunction</li>
+            </ol>
+        x : |float|
+            Position value.
+        
+        <H4>Returns</H4>
+        ----------------
+        |np.ndarray| Derivatives [dpsi, d2psi] w.r.t. position.
+        
         """
         
         # Unpack the state vector, [y_1, y_2] = [psi, dpsi/dx]
         psi, dpsi = state
         
         # Calculate the second derivative of psi
-        # d2psi = (2m/hbar^2) * (V(x) - E) * psi
+        # d2psi = (2m/hbar^2) * (V(x)-E) * psi
         # Notice, V(x) is a function of x, and E is a constant.
-        d2psi = (2.0 * self.m / self.hbar**2) * (self.potential(x) - self.current_energy) * psi
+        d2psi = (2.0*self.m/self.hbar**2) * (self.potential(x)-self.current_energy) * psi
         return np.array([dpsi, d2psi])
     
     def solve_schrodinger_equation(self, x_range, E, psi0):
@@ -64,6 +95,7 @@ class QuantumHarmonicOscillator:
             runName="QHO"
         )
         
+        # Ignore the time points, only keep the solution
         _, solution = rk4_solver.solve()
         
         # Interpolate the solution back to the original x_range
@@ -74,7 +106,8 @@ class QuantumHarmonicOscillator:
         """
         Normalize the wavefunction using Simpson's 1/3rd Rule
         """
-        def psi_squared(x_points):
+        def psi_squared(x_points): # pylint: disable=unused-argument
+            """The square of the wavefunction as part of the integrand for normalization"""
             return psi**2
         
         simpson_solver = SimpsonsRule(
@@ -106,8 +139,17 @@ class QuantumHarmonicOscillator:
         energies = np.linspace(energy_range[0], energy_range[1], num_points)
         shooting_results = [self.shoot(E, x_range, [0.0, 1.0]) for E in energies]
         
-        # Find zero crossings
-        # TODO: This can be improved.
+        # We want to find the eigenvalue E_n such that the wavefunction
+        # psi(x) approaches zero as x approaches infinity. So we look for
+        # the zero crossing closest to zero in the shooting results.
+        # Zero crossings indicate that the wavefunction is diverging and is
+        # indicated by a change in sign of the wavefunction. 
+        # The np.signbit function returns:
+        #     True for negative numbers (1), 
+        #     False for positive numbers (0). 
+        # The np.diff function calculates the difference between consecutive elements in the array. 
+        # A change in sign will result in a True value (1) in the diff array. 
+        # The np.where function returns the indices of the True values and we select the first element [0].
         zero_crossings = np.where(np.diff(np.signbit(shooting_results)))[0]
         
         # Find the zero crossing closest to zero

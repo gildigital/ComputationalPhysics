@@ -1,27 +1,43 @@
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long, ambiguous-variable-name
+
+"""This script simulates the motion of a nonlinear pendulum using the 4th-order Runge-Kutta method."""
+
 import numpy as np
 import matplotlib.pyplot as plt
+
 from FourthOrderRungeKutta import FourthOrderRungeKutta
 
 # Constants
 l = 1.0   # length of the pendulum in meters
 g = 9.81  # gravitational acceleration in m/s^2
 M = 1.0   # mass of the weight on the pendulum
-I = M * l**2  # moment of inertia of the system
+I = M*l**2  # moment of inertia of the system
 
 # Time parameters
-T = 2 * np.pi * np.sqrt(l / g)  # period of the pendulum
+T = 2*np.pi*np.sqrt(l/g)  # period of the pendulum
 num_oscillations = 2  # number of oscillations to simulate
-t_total = num_oscillations * T  # total time for the simulation
-step_size = 1000  # number of steps in the simulation
-dt = t_total / step_size  # time step
+t_total = num_oscillations*T  # total time for the simulation
+step_size = 1000  # Resolution of dt
+dt = t_total/step_size  # time step
 
-# Function for the equations of motion for the nonlinear pendulum
 def pendulum_ode(state, t):
     """
-    state: [theta, omega]
-    t: time (unused here since the pendulum is time-independent, but passed for generality)
+    Function for the equations of motion for the nonlinear pendulum.
     
-    Returns the derivatives dtheta/dt and domega/dt.
+    <H4>Keyword arguments</H4>
+    --------------------------
+    state : |arraylike|
+        Current state of the system [theta, omega], where 
+        <ol>
+            <li>theta: angle</li>
+            <li>omega: angular velocity</li>
+        </ol>
+    t : |float|
+        NOTE: Time value, not used in this function but required by the solver.
+    
+    <H4>Returns</H4>
+    ----------------
+    |np.ndarray| Derivatives [d_theta, d_omega] w.r.t. time.
     """
     theta, omega = state
     d_theta = omega
@@ -33,7 +49,7 @@ def small_angle_approx(theta0, t):
     omega0 = np.sqrt(g / l)
     return theta0 * np.cos(omega0 * t)
 
-# Range of small initial angles (step 9 requirement)
+# Range of small initial angles
 small_angles = np.linspace(0.01, 0.1, 5)  # range of small initial angles (in radians)
 
 # Plot configuration
@@ -69,13 +85,32 @@ ax1.legend(loc='upper right')
 ax1.grid(True)
 plt.show()
 
-# Now implement the energy conservation analysis as well.
-
-# Energy computation function
 def tot_E(I, omega, M, theta, g, l):
-    KE = 0.5 * I * omega**2
-    PE = M * g * l * (1 - np.cos(theta))
-    return KE + PE
+    """
+    Computes the total energy of the system
+    
+    <H4>Keyword arguments</H4>
+    --------------------------
+    I : |float|
+        Moment of inertia of the system.
+    omega : |np.ndarray|
+        Angular velocity values.
+    M : |float|
+        Mass of the weight.
+    theta : |np.ndarray|
+        Angle values.
+    g : |float|
+        Gravitational acceleration.
+    l : |float|
+        Length of the pendulum.
+    
+    <H4>Returns</H4>
+    ----------------
+    |np.ndarray| Total energy values or the Hamiltonian.
+    """
+    KE = 0.5*I*omega**2 # Kinetic energy
+    PE = M*g*l*(1-np.cos(theta)) # Potential energy
+    return KE+PE # Total energy
 
 # Initialize variables to store energy differences for each initial angle
 energy_diff = []
