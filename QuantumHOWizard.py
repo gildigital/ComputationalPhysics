@@ -20,12 +20,12 @@ class QuantumHarmonicOscillator:
 
         <H4>Keyword arguments</H4>
         --------------------------
-            m : |float, optional|
-                Defaults to 1.0.
-            omega : |float, optional|
-                Defaults to 1.0.
-            hbar : |float, optional|
-                Defaults to 1.0.
+        m : |float, optional|
+            Defaults to 1.0.
+        omega : |float, optional|
+            Defaults to 1.0.
+        hbar : |float, optional|
+            Defaults to 1.0.
         """
         self.m = m
         self.omega = omega
