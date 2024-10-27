@@ -16,17 +16,17 @@ class FourthOrderRungeKutta:
         
         <H4>Keyword arguments</H4>
         --------------------------
-        func : callable
+        func : |callable|
             The function to approximate (right-hand side of the ODE).
-        a : float
+        a : |float|
             Start of the interval.
-        b : float
+        b : |float|
             End of the interval.
-        N : int
+        N : |int|
             Number of steps.
-        x0 : float
+        x0 : |np.ndarray|
             Initial condition.
-        enablePlot : bool
+        enablePlot : |bool|
             If True, enables plotting after the solution is computed.
         """
         self.func = func # The function to approximate (f(x, t))
