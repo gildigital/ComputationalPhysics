@@ -21,4 +21,5 @@ Add change to class
 ```
   
 Then push your change!
-Gil is HAWT
+
+Gil is HAWT, He's MY goat
