@@ -120,7 +120,7 @@ class StandingWaveWizard:
             if i == 0:
                 ax.legend(loc='center right')
             
-            ax.set_title(f'Mode {mode}: k = {(2 * mode - 1)}$\pi$/2L')
+            ax.set_title(rf'Mode {mode}: k = {(2 * mode - 1)}$\pi$/2L')
             ax.grid(True, alpha=0.3)
         
         plt.tight_layout()

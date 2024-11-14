@@ -28,6 +28,8 @@ class FourthOrderRungeKutta:
             Initial condition.
         enablePlot : |bool|
             If True, enables plotting after the solution is computed.
+        runName : |str|
+            Name of the run.
         """
         self.func = func # The function to approximate (f(x, t))
         self.a = a # Start of the interval
@@ -74,10 +76,10 @@ class FourthOrderRungeKutta:
         xpoints : numpy.ndarray
             Array of approximated x values.
         """
-        plt.plot(tpoints, xpoints[:, 0], label=f'{self.runName}-Displacement')
-        plt.plot(tpoints, xpoints[:, 1], label=f'{self.runName}-Velocity', linestyle='--')
-        plt.xlabel("Time $t$")
-        plt.ylabel("State Variables")
+        plt.plot(tpoints, xpoints[:, 0], 'ro', ms=3, label='Displacement (y1)')
+        plt.plot(tpoints, xpoints[:, 1], 'b*', label='Velocity (y2)', linestyle='--')
+        plt.xlabel("Position $x$")
+        plt.ylabel("Displacement and Velocity")
         plt.legend()
         if self.enablePlot:
             plt.show()
