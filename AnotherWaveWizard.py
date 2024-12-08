@@ -83,16 +83,16 @@ class AnotherWaveWizard:
         )
 
         # Bisection method to find k that satisfies |y(x=L)| < tolerance
-        while k_max - k_min > 1e-6:  # Continue until k converges within a small range
+        while k_max - k_min > 1e-6: # Continue until k converges within a small range
             k_mid = (k_min + k_max) / 2.0
-            self.k = k_mid  # Update k in the system of ODEs
-            _, y_vals = rk_solver.solve()  # Solve the system with the current k
+            self.k = k_mid # Update k in the system of ODEs
+            _, y_vals = rk_solver.solve() # Solve the system with the current k
             
-            y_L = y_vals[-1, 0]  # Displacement at x = L
+            y_L = y_vals[-1, 0] # Displacement at x = L
 
             # Check if the boundary condition meets the tolerance
             if abs(y_L) < tolerance:
-                return k_mid  # Found the wave number that meets tolerance
+                return k_mid # Found the wave number that meets tolerance
             elif y_L > 0:
                 k_max = k_mid
             else:
@@ -136,9 +136,9 @@ rk_solver.plot(x_vals, y_vals)
 
 # Problem 5: Find the fundamental wave number for a fixed-free string
 # Parameters for the fundamental mode
-L = 1.0  # Length of the string
-tolerance = L / 1000  # Boundary condition tolerance at x = L
-initial_conditions = [0, 1.0]  # Example initial conditions: y(0) = 0, dy/dx(0) = 1
+L = 1.0 # Length of the string
+tolerance = L / 1000 # Boundary condition tolerance at x = L
+initial_conditions = [0, 1.0] # Example initial conditions: y(0) = 0, dy/dx(0) = 1
 
 # Initialize AnotherWaveWizard
 wave_solver = AnotherWaveWizard()
@@ -155,15 +155,15 @@ print(f"Fundamental Mode: k = {k_fundamental:.6f}, wavelength = {lambda_fundamen
 wave_solver = AnotherWaveWizard()
 
 # Parameters for the problem
-L = 1.0  # Length of the string
-tolerance = L / 1000  # Tolerance for the boundary condition
-initial_conditions = [0, 1.0]  # Initial conditions: y(0) = 0, dy/dx(0) = 1
+L = 1.0 # Length of the string
+tolerance = L / 1000 # Tolerance for the boundary condition
+initial_conditions = [0, 1.0] # Initial conditions: y(0) = 0, dy/dx(0) = 1
 
 # Calculate numerical results for higher harmonics
 k_harmonics = []
 lambda_harmonics = []
 
-for n in [2, 3]:  # First two higher harmonics
+for n in [2, 3]: # First two higher harmonics
     # Adjust the initial guess brackets based on theoretical k values
     k_min = 0.9*(2*n - 1)*np.pi/(2*L)
     k_max = 1.1*(2*n - 1)*np.pi/(2*L)
@@ -182,6 +182,9 @@ for n in [2, 3]:  # First two higher harmonics
 # Theoretical values for comparison
 k_theoretical = [(2*n - 1)*np.pi/(2*L) for n in [2, 3]]
 lambda_theoretical = [4*L/(2*n - 1) for n in [2, 3]]
+
+for n, k_theory, lambda_theory in zip([2, 3], k_theoretical, lambda_theoretical):
+    print(f"Theoretical values for Harmonic {n}: k = {k_theory:.6f}, wavelength = {lambda_theory:.6f}")
 
 # Compute fractional discrepancies with a list comprehension for each pair of wave numbers
 # and theoretical values; zip() is used to iterate over both lists simultaneously,
