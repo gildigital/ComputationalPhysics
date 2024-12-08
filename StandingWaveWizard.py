@@ -14,7 +14,7 @@ class StandingWaveWizard:
         """
         Initialize the wave problem solver.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         length : |float|
             Length of the string
@@ -272,7 +272,7 @@ if __name__ == "__main__":
     ###################
     
     # Problem 2: Compute first 10 non-vanshing fourier coefficients
-    
+    print("\nProblem 2: Compute first 10 non-vanishing Fourier coefficients")
     # Initialize the StandingWaveWizard
     wizard = StandingWaveWizard(waveProblem='fixed-initial')
 
@@ -295,21 +295,44 @@ if __name__ == "__main__":
         
     # Problem 3: Compute and plot successive partial sums of the Fourier series
     # representing the intial shape up to the first 10 non-0 Fourier coefficients.
+    print("\nProblem 3: Compute and plot successive partial sums of the Fourier series")
     
     # Reconstruct the initial shape using the Fourier series
     reconstructed_shape = np.zeros_like(wizard.x)  # Initialize to zeros
 
     # Sum up the first 10 non-vanishing Fourier terms
     for n, cn in enumerate(coefficients, start=1):
-        reconstructed_shape += cn * np.sin(n * np.pi * wizard.x / wizard.length)
+        reconstructed_shape += cn*np.sin(n*np.pi*wizard.x/wizard.length)
 
     # Plot the original and reconstructed initial shapes
     plt.figure(figsize=(10, 6))
     plt.plot(wizard.x, wizard.initialShape(wizard.x), 'b-', label='Original Shape')
     plt.plot(wizard.x, reconstructed_shape, 'r--', label='Reconstructed Shape (10 modes)')
-    plt.title(r"Reconstruction of Initial Shape ($\xi(x, t=0)\$)")
+    plt.title(r"Reconstruction of Initial Shape ($\xi(x, t=0)$)")
     plt.xlabel("x / L")
     plt.ylabel(r"$\xi(x, t=0)$")
     plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    # Problem 4: Animate the string motion for the first 10 modes over at least 5 time periods
+    print("\nProblem 4: Animate the string motion for the first 10 modes over 5 time periods")
+
+    # Representative times for snapshots
+    times = [0, 0.25, 0.5, 0.75, 1.0]  # In units of the period
+
+    # Initialize a figure for the snapshots
+    plt.figure(figsize=(10, 8))
+
+    # Plot the snapshots
+    for i, t in enumerate(times):
+        motion = wizard.computeMotion(t, numModes=10)  # Compute string motion at time t
+        plt.plot(wizard.x, motion, label=f"t = {t:.2f} T")  # Plot with normalized time
+
+    # Add plot details
+    plt.title("Snapshots of String Motion Over Time")
+    plt.xlabel("x / L")
+    plt.ylabel(r"$\xi(x, t)$")
+    plt.legend(title="Time (T)")
     plt.grid(True)
     plt.show()

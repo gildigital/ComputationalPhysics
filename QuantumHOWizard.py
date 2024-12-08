@@ -18,7 +18,7 @@ class QuantumHarmonicOscillator:
         """
         Initialize the quantum harmonic oscillator.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         m : |float, optional|
             Defaults to 1.0.
@@ -49,7 +49,7 @@ class QuantumHarmonicOscillator:
         """
         Define the Schrodinger equation for RK4
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         state : |arraylike|
             Current state of the system [psi, dpsi/dx], where 
@@ -60,7 +60,7 @@ class QuantumHarmonicOscillator:
         x : |float|
             Position value.
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |np.ndarray| Derivatives [dpsi, d2psi] w.r.t. position.
         

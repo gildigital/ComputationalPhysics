@@ -11,7 +11,7 @@ class SecondOrderRungeKutta:
         """
         Initializes the solver.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         func : callable
             The function to approximate (right-hand side of the ODE).
@@ -36,7 +36,7 @@ class SecondOrderRungeKutta:
         """
         Solves the ODE using the 2nd-order Runge-Kutta method (midpoint method).
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         tpoints : |np.ndarray|
             Array of time points.
@@ -60,7 +60,7 @@ class SecondOrderRungeKutta:
         """
         Plots the results of the ODE approximation.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         tpoints : numpy.ndarray
             Array of time points.

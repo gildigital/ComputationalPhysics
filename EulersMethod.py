@@ -16,7 +16,7 @@ class EulersMethod:
         """
         Initializes the Euler method solver.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         func : callable
             The function to approximate (right-hand side of the ODE).
@@ -61,7 +61,7 @@ class EulersMethod:
         """
         Plots the results of the ODE approximation.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         tpoints : numpy.ndarray
             Array of time points.

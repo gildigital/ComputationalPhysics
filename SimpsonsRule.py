@@ -14,7 +14,7 @@ class SimpsonsRule:
         """
         Initializes the Simpson's Rule solver.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         func : |callable|
             The function to integrate.
@@ -47,7 +47,7 @@ class SimpsonsRule:
         """
         Applies Simpson's 1/3rd Rule to compute the numerical integral.
 
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         result : |float|
             The approximated integral value.

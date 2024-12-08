@@ -32,7 +32,7 @@ class DampedOscillator:
         Use the self variable to represent the instance of the class and store the input parameters as
         attributes.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         mass : |float|
             The mass of the oscillator (in kg).
@@ -45,7 +45,7 @@ class DampedOscillator:
         alpha : |float|
             The exponential decay constant of the driving force.
         
-        <H4>Derived parameters</H4>
+        ## Derived parameters
         ----------------------------
         naturalFrequency : |float|
             The natural frequency of the oscillator, derived from the mass and spring constant.
@@ -64,12 +64,12 @@ class DampedOscillator:
         """
         Driving force function: f(t) = f_0*exp(-\alpha*t)
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         t : |float| or |array-like|
             The time value or array of time values (in seconds) at which to compute the driving force.
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |float| or |np.ndarray| The driving force evaluated at the given time(s).
         """
@@ -79,14 +79,14 @@ class DampedOscillator:
         """
         Using the energy function: E(t) = (m*v^2 + k*x^2)/2 to acquire the energy at each time.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         timeValues : |array-like|
             The time points (in seconds) at which the displacement was computed.
         displacementValues : |array-like|
             The computed displacement values x(t) corresponding to the time points.
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |np.ndarray| The computed energy values E(t) for the given time points.
         """
@@ -114,12 +114,12 @@ class DampedOscillator:
         time values. The displacement is calculated by convolving the Green's function G(t-t')
         with the driving force f(t'), using Simpson's 1/3rd Rule for numerical integration.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         timeValues : |array|
             A list or array of time points (in seconds) at which to compute the displacement.
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |np.array| The displacement values x(t) at the given time points.
         """
@@ -156,7 +156,7 @@ class DampedOscillator:
         """
         Plot x(t) and E(t) over time t.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         timeValues : |array-like|
             The time points (in seconds) at which the displacement was computed.
@@ -196,12 +196,12 @@ class DampedOscillator:
         """
         Run the simulation for the damped oscillator with the given parameters and time values.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         timeValues : |array-like|
             A list or array of time points (in seconds) at which to compute the displacement.
 
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |np.ndarray| The computed displacement values x(t) at the given time points.
         """

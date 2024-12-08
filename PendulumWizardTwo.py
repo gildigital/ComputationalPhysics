@@ -24,7 +24,7 @@ def pendulum_ode(state, t):
     """
     Function for the equations of motion for the nonlinear pendulum.
     
-    <H4>Keyword arguments</H4>
+    ## Keyword arguments
     --------------------------
     state : |arraylike|
         Current state of the system [theta, omega], where 
@@ -35,7 +35,7 @@ def pendulum_ode(state, t):
     t : |float|
         NOTE: Time value, not used in this function but required by the solver.
     
-    <H4>Returns</H4>
+    ## Returns
     ----------------
     |np.ndarray| Derivatives [d_theta, d_omega] w.r.t. time.
     """
@@ -89,7 +89,7 @@ def tot_E(I, omega, M, theta, g, l):
     """
     Computes the total energy of the system
     
-    <H4>Keyword arguments</H4>
+    ## Keyword arguments
     --------------------------
     I : |float|
         Moment of inertia of the system.
@@ -104,7 +104,7 @@ def tot_E(I, omega, M, theta, g, l):
     l : |float|
         Length of the pendulum.
     
-    <H4>Returns</H4>
+    ## Returns
     ----------------
     |np.ndarray| Total energy values or the Hamiltonian.
     """

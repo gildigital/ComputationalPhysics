@@ -14,7 +14,7 @@ class FourthOrderRungeKutta:
         """
         Initializes the solver.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         func : |callable|
             The function to approximate (right-hand side of the ODE).
@@ -44,7 +44,7 @@ class FourthOrderRungeKutta:
         """
         Solves the ODE using the 4th-order Runge-Kutta method (RK4).
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         tpoints : |np.ndarray|
             Array of time points.
@@ -69,7 +69,7 @@ class FourthOrderRungeKutta:
         """
         Plots the results of the ODE approximation.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         tpoints : numpy.ndarray
             Array of time points.

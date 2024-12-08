@@ -20,7 +20,7 @@ class LinearOscillatorWizard:
         """
         Initialize the LinearOscillatorWizard object.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         omega0 : float
             Natural frequency of the oscillator.
@@ -58,14 +58,14 @@ class LinearOscillatorWizard:
         """
         Represents the coupled first-order ODE system.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         state : |list| or |np.ndarray|
             Current state of the system [x, v], where x is displacement and v is velocity.
         t : |float|
             Current time.
 
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |list| or |np.ndarray| Derivatives [dx/dt, dv/dt] as defined by the coupled ODEs.
         """
@@ -78,12 +78,12 @@ class LinearOscillatorWizard:
         """
         Computes the particular solution for the damped driven oscillator.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         t : |float|
             Time value at which to evaluate the particular solution.
 
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |float| The particular solution at time t.
         """
@@ -103,7 +103,7 @@ class LinearOscillatorWizard:
         as that's when the numerical solution should reach a steady state and resemble the
         particular solution.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         time_values : |np.ndarray|
             Array of time points.
@@ -138,7 +138,7 @@ class LinearOscillatorWizard:
         """
         Runs the simulation for the oscillator and returns the results.
 
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         time_values : np.ndarray
             Array of time points.
@@ -172,7 +172,7 @@ class LinearOscillatorWizard:
         """
         Plot the displacement and velocity over time.
 
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         time_values : np.ndarray
             Array of time points.

@@ -6,7 +6,7 @@ def morse_potential(x, D, a, x0):
     """
     Compute the Morse potential V(x).
     
-    <H4>Keyword arguments</H4>
+    ## Keyword arguments
     --------------------------
     x : |np.ndarray|
         Position values.
@@ -17,7 +17,7 @@ def morse_potential(x, D, a, x0):
     x0 : |float|
         Equilibrium bond length.
         
-    <H4>Returns</H4>
+    ## Returns
     ----------------
     |np.ndarray| : Potential values at x.
     """

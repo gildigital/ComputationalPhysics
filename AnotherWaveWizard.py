@@ -9,7 +9,7 @@ class AnotherWaveWizard:
     """
     This class solves Ted's project 3.
     
-    <H4>Problems</H4>
+    ## Problems
     -----------------
     1.  Write functions that represent the rhs of the system of ODEs:
             dy1/dx=y2
@@ -32,14 +32,14 @@ class AnotherWaveWizard:
         """
         Define the system of ODEs for the wave equation.
         
-        <H4>Keyword arguments</H4>
+        ## Keyword arguments
         --------------------------
         y : |np.ndarray|
             Array of dependent variables.
         x : |float|
             Not used.
         
-        <H4>Returns</H4>
+        ## Returns
         ----------------
         |np.ndarray| : Array of derivatives: [dy1_dx, dy2_dx].
         """
