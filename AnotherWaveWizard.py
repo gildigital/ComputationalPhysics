@@ -48,10 +48,10 @@ class AnotherWaveWizard:
         dy2_dx = -self.k**2*y1
         return np.array([dy1_dx, dy2_dx])
 
-    def find_fundamental_k(self, L, tolerance, initial_conditions, num_steps=100):
+    def find_fundamental_k(self, L, tolerance, initial_conditions, n=1, num_steps=100):
         """
         Find the fundamental wave number k for a fixed-free string that satisfies
-        the boundary condition y(x = L) ≈ 0 within a specified tolerance.
+        the boundary condition y(x=L) ~ 0 within a specified tolerance.
         
         Parameters:
         L : |float|
@@ -60,6 +60,8 @@ class AnotherWaveWizard:
             Tolerance for boundary condition at x = L.
         initial_conditions : |np.ndarray|
             Initial conditions [y1(0), y2(0)].
+        n : |int|
+            Mode number for the fundamental. Defaults to 1.
         num_steps : |int, optional|
             Number of steps for the RK4 solver. Defaults to 100.
         
@@ -67,8 +69,8 @@ class AnotherWaveWizard:
         |float| : The fundamental wave number k that meets the boundary condition.
         """
         # Define initial bracket for k around the expected fundamental mode for a fixed-free string
-        k_min = 0.9 * (np.pi / (2 * L))
-        k_max = 1.1 * (np.pi / (2 * L))
+        k_min = 0.9*(2*n - 1)*np.pi/(2*L)
+        k_max = 1.1*(2*n - 1)*np.pi/(2*L)
 
         # Initialize the RK4 solver
         rk_solver = FourthOrderRungeKutta(
@@ -87,7 +89,7 @@ class AnotherWaveWizard:
             _, y_vals = rk_solver.solve()  # Solve the system with the current k
             
             y_L = y_vals[-1, 0]  # Displacement at x = L
-            
+
             # Check if the boundary condition meets the tolerance
             if abs(y_L) < tolerance:
                 return k_mid  # Found the wave number that meets tolerance
@@ -146,3 +148,50 @@ k_fundamental = wave_solver.find_fundamental_k(L, tolerance, initial_conditions)
 lambda_fundamental = 2 * np.pi / k_fundamental
 
 print(f"Fundamental Mode: k = {k_fundamental:.6f}, wavelength = {lambda_fundamental:.6f}")
+
+# Problem 6: Find the next two modes for a fixed-free string
+
+# Initialize the wave solver
+wave_solver = AnotherWaveWizard()
+
+# Parameters for the problem
+L = 1.0  # Length of the string
+tolerance = L / 1000  # Tolerance for the boundary condition
+initial_conditions = [0, 1.0]  # Initial conditions: y(0) = 0, dy/dx(0) = 1
+
+# Calculate numerical results for higher harmonics
+k_harmonics = []
+lambda_harmonics = []
+
+for n in [2, 3]:  # First two higher harmonics
+    # Adjust the initial guess brackets based on theoretical k values
+    k_min = 0.9*(2*n - 1)*np.pi/(2*L)
+    k_max = 1.1*(2*n - 1)*np.pi/(2*L)
+
+    # Use the bisection method to find k_n
+    wave_solver.k = (k_min + k_max)/2
+    k_n = wave_solver.find_fundamental_k(L, tolerance, initial_conditions, n)
+    lambda_n = 2*np.pi/k_n
+
+    # Store the results
+    k_harmonics.append(k_n)
+    lambda_harmonics.append(lambda_n)
+
+    print(f"Harmonic {n}: k = {k_n:.6f}, wavelength = {lambda_n:.6f}")
+
+# Theoretical values for comparison
+k_theoretical = [(2*n - 1)*np.pi/(2*L) for n in [2, 3]]
+lambda_theoretical = [4*L/(2*n - 1) for n in [2, 3]]
+
+# Compute fractional discrepancies with a list comprehension for each pair of wave numbers
+# and theoretical values; zip() is used to iterate over both lists simultaneously,
+# and we use the formula for fractional discrepancy over each pair produced by zip().
+fractional_discrepancies = [
+    # Recall: dx/x will give the fractional discrepancy
+    abs((k_num - k_theory)/k_theory)
+    for k_num, k_theory in zip(k_harmonics, k_theoretical)
+]
+
+# Display the fractional discrepancies by zipping the harmonic numbers and the discrepancies
+for n, frac_disc in zip([2, 3], fractional_discrepancies):
+    print(f"Fractional discrepancy for Harmonic {n}: {frac_disc:.6%}")

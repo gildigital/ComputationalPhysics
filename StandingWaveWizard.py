@@ -262,3 +262,54 @@ if __name__ == "__main__":
     wizard3.plotModes(3)
     
     plt.show()
+    
+    ##############
+    # End of PS2 #
+    ##############
+    
+    ###################
+    # Begin Project 2 #
+    ###################
+    
+    # Problem 2: Compute first 10 non-vanshing fourier coefficients
+    
+    # Initialize the StandingWaveWizard
+    wizard = StandingWaveWizard(waveProblem='fixed-initial')
+
+    # Parameters
+    num_modes_required = 10
+    coefficients = []  # List to store non-zero coefficients
+    n = 1  # Start with the first mode
+
+    print("First 10 Non-Zero Fourier Coefficients (c_n):")
+
+    # Loop until we have the required number of non-zero coefficients
+    while len(coefficients) < num_modes_required:
+        cn = wizard.computeCn(n)  # Compute the nth coefficient
+        
+        if abs(cn) > 1e-6:  # Check if the coefficient is non-zero
+            coefficients.append(cn)
+            print(f"c_{n} = {cn:.6f}")
+        
+        n += 1  # Move to the next mode 
+        
+    # Problem 3: Compute and plot successive partial sums of the Fourier series
+    # representing the intial shape up to the first 10 non-0 Fourier coefficients.
+    
+    # Reconstruct the initial shape using the Fourier series
+    reconstructed_shape = np.zeros_like(wizard.x)  # Initialize to zeros
+
+    # Sum up the first 10 non-vanishing Fourier terms
+    for n, cn in enumerate(coefficients, start=1):
+        reconstructed_shape += cn * np.sin(n * np.pi * wizard.x / wizard.length)
+
+    # Plot the original and reconstructed initial shapes
+    plt.figure(figsize=(10, 6))
+    plt.plot(wizard.x, wizard.initialShape(wizard.x), 'b-', label='Original Shape')
+    plt.plot(wizard.x, reconstructed_shape, 'r--', label='Reconstructed Shape (10 modes)')
+    plt.title(r"Reconstruction of Initial Shape ($\xi(x, t=0)\$)")
+    plt.xlabel("x / L")
+    plt.ylabel(r"$\xi(x, t=0)$")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
