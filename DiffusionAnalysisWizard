@@ -1,0 +1,302 @@
+# pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long, ambiguous-variable-name
+
+import pickle
+
+import numpy as np
+import matplotlib.pyplot as plt
+from RandomWalkWizard import RandomWalkWizard
+import os
+
+
+class DiffusionAnalysisWizard:
+    """
+    DiffusionAnalysisWizard processes diffusion data to extract power spectra 
+    and autocorrelation functions from simulated random walks.
+    """
+    def __init__(self, hist_data=None, x_edges=None, y_edges=None):
+        """
+        Initialize the analysis with histogram data.
+
+        ## Keyword arguments
+        --------------------------
+        hist_data : |np.ndarray|, optional
+            2D histogram data for intensity I(x, y).
+        x_edges : |np.ndarray|, optional
+            Edges of the bins along the x-axis.
+        y_edges : |np.ndarray|, optional
+            Edges of the bins along the y-axis.
+        """
+        self.hist_data = hist_data
+        self.x_edges = x_edges
+        self.y_edges = y_edges
+
+
+    # Utility functions are not part of the class so they don't need self
+    @staticmethod
+    def simulate_and_pickle(N_p, N_s, dr, bins, file_path):
+        """
+        Run the random walk simulation and save the histogram data as a pickle file.
+
+        ## Keyword arguments
+        --------------------------
+        N_p : |int|
+            Number of particles.
+        N_s : |int|
+            Number of steps per particle.
+        dr : |float|
+            Step size.
+        bins : |int|
+            Number of bins for the histogram.
+        file_path : |str|
+            Path to save the pickle file.
+        """
+        rw = RandomWalkWizard(N_p=N_p, N_s=N_s, dr=dr)
+        rw.simulate()
+        hist, x_edges, y_edges = rw.compute_2d_histogram(bins=bins)
+        
+        data = {'hist': hist, 'x_edges': x_edges, 'y_edges': y_edges}
+        with open(file_path, 'wb') as file:
+            pickle.dump(data, file)
+
+    @staticmethod
+    def load_data(file_path):
+        """
+        Load pickled histogram data from file.
+        
+        ## Keyword arguments
+        --------------------------
+        file_path : |str|
+            Path to the pickle file.
+        
+        ## Returns
+        ----------------
+        |tuple| : (hist_data, x_edges, y_edges)
+        """
+        with open(file_path, 'rb') as file:
+            data = pickle.load(file)
+        return data['hist'], data['x_edges'], data['y_edges']
+
+    def plot_slices(self):
+        """
+        Plot slices of I(x, y) along x=0 and y=0.
+        """
+        # Compute bin centers
+        x_centers = (self.x_edges[:-1] + self.x_edges[1:]) / 2
+        y_centers = (self.y_edges[:-1] + self.y_edges[1:]) / 2
+
+        # Central slices
+        x_slice = self.hist_data[self.hist_data.shape[0] // 2, :]
+        y_slice = self.hist_data[:, self.hist_data.shape[1] // 2]
+
+        # Plot slices
+        plt.figure(figsize=(12, 5))
+        plt.subplot(1, 2, 1)
+        plt.plot(x_centers, x_slice)
+        plt.title("Slice: I(x=0, y)")
+        plt.xlabel("y")
+        plt.ylabel("Intensity")
+
+        plt.subplot(1, 2, 2)
+        plt.plot(y_centers, y_slice)
+        plt.title("Slice: I(x, y=0)")
+        plt.xlabel("x")
+        plt.ylabel("Intensity")
+
+        plt.tight_layout()
+        plt.show()
+
+    @staticmethod
+    def compute_power_spectrum(slice_data):
+        """
+        Compute the 1D power spectrum of a slice using FFT.
+
+        ## Keyword arguments
+        --------------------
+        slice_data : |np.ndarray|
+            1D data slice (e.g., I(x=0, y) or I(x, y=0)).
+
+        ## Returns
+        ----------
+        |tuple| : (k, power_spectrum)
+            Wave numbers (k) and power spectrum values.
+        """
+        # Perform the FFT and compute the power spectrum
+        fft_result = np.fft.fft(slice_data)
+        power_spectrum = np.abs(fft_result)**2
+
+        # Compute wave numbers and shift them for proper ordering
+        k = np.fft.fftshift(np.fft.fftfreq(len(slice_data)))
+        power_spectrum = np.fft.fftshift(power_spectrum)
+
+        return k, power_spectrum
+    
+    def compute_1d_autocorrelation(self, power_spectrum):
+        """
+        Compute 1D autocorrelation function from power spectrum using IFFT.
+        
+        ## Keyword arguments
+        --------------------------
+        power_spectrum : |np.ndarray|
+            1D power spectrum data.
+        
+        ## Returns
+        ----------------
+        |np.ndarray| : Autocorrelation function values.
+        """
+        autocorr = np.fft.ifft(np.fft.ifftshift(power_spectrum)).real
+        return autocorr
+
+    def compute_2d_autocorrelation(self):
+        """
+        Compute the 2D autocorrelation function using FFT.
+
+        ## Returns
+        ----------------
+        |np.ndarray| : 2D autocorrelation function values.
+        """
+        # Compute the Fourier Transform of the 2D histogram
+        fft_result = np.fft.fft2(self.hist_data)
+
+        # Compute the power spectrum
+        power_spectrum = np.abs(fft_result)**2
+
+        # Compute the inverse Fourier Transform of the power spectrum and shift
+        autocorr = np.fft.fftshift(np.fft.ifft2(power_spectrum).real)
+
+        # Normalize the autocorrelation function
+        autocorr /= np.max(autocorr)
+
+        return autocorr
+
+
+    def plot_2d_autocorrelation(self, autocorr):
+        """
+        Plot the 2D autocorrelation function as a contour plot.
+
+        ## Keyword arguments
+        --------------------------
+        autocorr : |np.ndarray|
+            2D autocorrelation function values.
+        """
+        plt.figure(figsize=(8, 6))
+        plt.contourf(autocorr, cmap='viridis')
+        plt.colorbar(label="Autocorrelation")
+        plt.title("2D Autocorrelation Function")
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.show()
+
+    
+    @staticmethod
+    def extract_1d_slices(hist, x_edges, y_edges):
+        """
+        Extract 1D slices from the 2D histogram data along x=0 and y=0.
+
+        ## Keyword arguments
+        --------------------
+        hist : |np.ndarray|
+            2D histogram data.
+        x_edges : |np.ndarray|
+            Bin edges along the x-axis.
+        y_edges : |np.ndarray|
+            Bin edges along the y-axis.
+
+        ## Returns
+        ----------
+        |tuple| : (x_slice, y_slice, x_centers, y_centers)
+            1D slices along x=0 and y=0, and the corresponding bin centers.
+        """
+        # Compute bin centers
+        x_centers = (x_edges[:-1] + x_edges[1:]) / 2
+        y_centers = (y_edges[:-1] + y_edges[1:]) / 2
+
+        # Find the index of the bin closest to x=0 and y=0
+        x_zero_idx = np.abs(x_centers).argmin()
+        y_zero_idx = np.abs(y_centers).argmin()
+
+        # Extract slices
+        x_slice = hist[x_zero_idx, :]
+        y_slice = hist[:, y_zero_idx]
+
+        return x_slice, y_slice, x_centers, y_centers
+
+file_path = "diffusion_data.pkl"
+N_p = 10000
+N_s = 10000
+dr = 1.0
+bins = 100
+
+# Step at which to extract the 2D histogram
+step_number = N_s
+
+# Check if the results file exists
+if os.path.exists(file_path):
+    print(f"The results file '{file_path}' already exists.")
+    recalculate = input("Recalculate the random walk data? [y,n]: ").strip().lower()
+    if recalculate == 'y':
+        DiffusionAnalysisWizard.simulate_and_pickle(N_p, N_s, dr, bins, file_path)
+else:
+    # File does not exist, calculate and save results
+    DiffusionAnalysisWizard.simulate_and_pickle(N_p, N_s, dr, bins, file_path)
+
+# Load data
+hist, x_edges, y_edges = DiffusionAnalysisWizard.load_data(file_path)
+
+# Extract and plot the 2D histogram for the final step
+plt.imshow(hist.T, origin='lower', extent=[x_edges[0], x_edges[-1], y_edges[0], y_edges[-1]], aspect='auto')
+plt.colorbar(label="Intensity (I(x, y))")
+plt.title(f"2D Histogram of Particle Distribution at Step {step_number}")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+
+# Extract and plot slices (IV, Q2)
+x_slice, y_slice, x_centers, y_centers = DiffusionAnalysisWizard.extract_1d_slices(hist, x_edges, y_edges)
+
+# Plot the 1D slices
+plt.figure(figsize=(12, 5))
+
+# Plot I(x=0, y)
+plt.subplot(1, 2, 1)
+plt.plot(y_centers, y_slice)
+plt.title("Intensity Slice: I(x=0, y)")
+plt.xlabel("y")
+plt.ylabel("Intensity")
+
+# Plot I(x, y=0)
+plt.subplot(1, 2, 2)
+plt.plot(x_centers, x_slice)
+plt.title("Intensity Slice: I(x, y=0)")
+plt.xlabel("x")
+plt.ylabel("Intensity")
+
+plt.tight_layout()
+plt.show()
+
+# Compute the power spectrum of I(x=0, y), (IV, Q3)
+# Step 1: Extract the 1D slice
+x_slice, y_slice, x_centers, y_centers = DiffusionAnalysisWizard.extract_1d_slices(hist, x_edges, y_edges)
+
+# Step 2: Compute the power spectrum of I(x=0, y)
+k, power_spectrum = DiffusionAnalysisWizard.compute_power_spectrum(y_slice)
+
+# Step 3: Plot the power spectrum
+plt.figure(figsize=(8, 5))
+plt.plot(k, power_spectrum, label="Power Spectrum")
+plt.title("1D Power Spectrum of I(x=0, y)")
+plt.xlabel("Wave Number (k)")
+plt.ylabel("Power Spectrum")
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# Part IV, Q4
+
+# Initialize DiffusionAnalysisWizard with histogram data
+analysis = DiffusionAnalysisWizard(hist_data=hist, x_edges=x_edges, y_edges=y_edges)
+
+# Compute the 2D autocorrelation function
+autocorr = analysis.compute_2d_autocorrelation()
+
+# Plot the 2D autocorrelation function
+analysis.plot_2d_autocorrelation(autocorr)
