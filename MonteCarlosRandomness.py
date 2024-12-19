@@ -1,6 +1,6 @@
 # pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long, ambiguous-variable-name
 from random import random, randrange
-from matplotlib.cm import viridis  # or 'plasma', 'magma', 'inferno'
+from matplotlib.cm import viridis # or 'plasma', 'magma', 'inferno'
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ class MonteCarloGas:
         # Initialize arrays
         self.n = np.ones(N, dtype=int) # Quantum numbers (all particles start in ground state)
         self.E = np.zeros(ns) # Total energy at each step
-        self.E[0] = self.compute_total_energy()  # Store initial energy
+        self.E[0] = self.compute_total_energy() # Store initial energy
 
         
     def compute_energy_change(self, n, direction):
@@ -153,9 +153,9 @@ final_energies = [] # Store final energies for each run for comparison
 N = 1000
 epsilon1 = 1.0
 kT = 100.0 # kT >> epsilon1 for high temperature limit
-ns = 500000 # Large number of steps for convergence
+ns = 200000 # Large number of steps for convergence
 
-for i in range(num_runs):  # Run num_runs number of simulations
+for i in range(num_runs): # Run num_runs number of simulations
     mc_gas = MonteCarloGas(N, epsilon1, kT, ns) # Remove input parameters to use defaults
     energies = mc_gas.run_simulation()
     # print(f"Final energy for run {i+1}: {energies[-1]}")

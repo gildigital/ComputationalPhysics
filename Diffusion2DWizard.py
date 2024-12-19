@@ -203,6 +203,112 @@ class Diffusion2DWizard:
         plt.suptitle(rf'Concentration Cross-sections (D = {self.D} $cm^2/s$)')
         plt.tight_layout()
         plt.show()
+        
+    ###########################
+    ### Part II Problem 6   ###
+    ### compute_averages()  ###
+    ### analyze_evolution() ###
+    ### plot_averages()     ###
+    ###########################
+    
+    def compute_averages(self, profile):
+        """
+        Compute spatial averages for a given concentration profile.
+        
+        ## Keyword arguments                        
+        --------------------
+        profile : |np.ndarray|
+            2D array of concentration values
+            
+        ## Returns
+        ----------
+        |tuple| : (avg_x, avg_y, avg_r2)
+            Average x position, y position, and r^2
+        """
+        # Total concentration (for normalization)
+        #       \xi_{tot} = \int \int xi(x, y) dx dy
+        total_conc = np.sum(profile)*self.dx*self.dx
+        
+        if total_conc < 1e-10: # Avoid division by zero
+            return 0.0, 0.0, 0.0
+        
+        # Compute average x and y positions
+        #   <x> = \int \int x xi(x, y) dx dy / \xi_{tot}
+        #   <y> = \int \int y xi(x, y) dx dy / \xi_{tot}
+        avg_x = np.sum(self.X*profile)*self.dx*self.dx/total_conc
+        avg_y = np.sum(self.Y*profile)*self.dx*self.dx/total_conc
+        
+        # Calculate r^2 = x^2 + y^2
+        #   MSD: <r^2> = \int \int r^2 xi(x, y) dx dy / \xi_{tot}
+        r2 = self.X**2 + self.Y**2
+        avg_r2 = np.sum(r2*profile)*self.dx*self.dx/total_conc
+        
+        return avg_x, avg_y, avg_r2
+
+    def analyze_evolution(self, times, profiles): # pylint: disable=unused-argument
+        """
+        Analyze the time evolution of average quantities.
+        
+        ## Keyword arguments                                                            
+        --------------------
+        times : |list|
+            List of time points. Note: Not used in this function.
+        profiles : |list|
+            List of concentration profiles
+            
+        ## Returns
+        ----------
+        |tuple| : (avg_x_t, avg_y_t, avg_r2_t)
+            Time series of average x, y positions and r^2
+        """
+        avg_x_t = []
+        avg_y_t = []
+        avg_r2_t = []
+        
+        for profile in profiles:
+            avg_x, avg_y, avg_r2 = self.compute_averages(profile)
+            avg_x_t.append(avg_x)
+            avg_y_t.append(avg_y)
+            avg_r2_t.append(avg_r2)
+        
+        return np.array(avg_x_t), np.array(avg_y_t), np.array(avg_r2_t)
+
+    def plot_averages(self, times, profiles):
+        """
+        Plot the time evolution of average position and MSD.
+        
+        ## Keyword arguments
+        --------------------
+        times : |list|
+            List of time points
+        profiles : |list|
+            List of concentration profiles
+        """
+        # Analyze evolution computes average x, y positions and r^2
+        avg_x_t, avg_y_t, avg_r2_t = self.analyze_evolution(times, profiles)
+        
+        # Create figure with 2 subplots
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        
+        # Plot average position components
+        ax1.plot(times, avg_x_t, 'b-', label='⟨x⟩')
+        ax1.plot(times, avg_y_t, 'r--', label='⟨y⟩')
+        ax1.set_xlabel('Time (s)')
+        ax1.set_ylabel('Position (cm)')
+        ax1.set_title('Average Position vs Time')
+        ax1.grid(True)
+        ax1.legend()
+        
+        # Plot MSD
+        ax2.plot(times, avg_r2_t, 'g-')
+        ax2.set_xlabel('Time (s)')
+        ax2.set_ylabel(r'$\langle r^2 \rangle \ (cm^2)$')
+        ax2.set_title('Mean Square Displacement vs Time')
+        ax2.grid(True)
+        
+        plt.suptitle(rf'$D = {self.D}\ cm^2/s$')
+        plt.tight_layout()
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -221,3 +327,12 @@ if __name__ == "__main__":
     times_water, profiles_water = solver_water.solve(t_final=1000.0, save_interval=20)
     solver_water.plot_evolution(times_water, profiles_water)
     solver_water.plot_cross_sections(times_water, profiles_water)
+    
+    # Part II Problem 6
+    # Case 1: Oxygen in air
+    print("Plotting averages for oxygen in air...")
+    solver_air.plot_averages(times_air, profiles_air)
+
+    # Case 2: Oxygen in water
+    print("Plotting averages for oxygen in water...")
+    solver_water.plot_averages(times_water, profiles_water)
