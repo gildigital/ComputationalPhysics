@@ -1,5 +1,3 @@
-"""This module provides a class for solving Ted's project 3."""
-
 import numpy as np
 
 from FourthOrderRungeKutta import FourthOrderRungeKutta
@@ -7,8 +5,6 @@ from FourthOrderRungeKutta import FourthOrderRungeKutta
 
 class AnotherWaveWizard:
     """
-    This class solves Ted's project 3.
-    
     ## Problems
     -----------------
     1.  Write functions that represent the rhs of the system of ODEs:
