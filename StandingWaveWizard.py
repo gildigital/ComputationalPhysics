@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from SimpsonsRule import SimpsonsRule
 
 
-# Problem Set 3: Standing Wave Wizard
+# Standing Wave Wizard
 class StandingWaveWizard:
     """StandingWaveWizard class for solving standing wave problems."""
     def __init__(self, length=1.0, waveProblem='fixed-free', numPoints=1000):
