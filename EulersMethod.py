@@ -1,7 +1,6 @@
 # pylint: disable=invalid-name, redefined-outer-name, trailing-whitespace, line-too-long
 
 """
-Sourced from USD Phys 371, Fall 24, ODE.pdf
 Euler's method is a 1st order Runge-Kutta method.
 """
 
