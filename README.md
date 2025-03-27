@@ -1,4 +1,4 @@
-# 371st Conquest
+# Computational Physics
 
 Feel free to take my logic but not my words! Be cool and rewrite everything in your own style.
 
